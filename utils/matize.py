@@ -32,6 +32,17 @@ def getMetaMessage(mid):
                 MetaMessage[index].append(msg)
     return MetaMessage
 
+def tenTimesShorter(mat):
+    numChannel = np.size(mat, 0)
+    length = np.size(mat, 1)
+    width = np.size(mat, 2)
+    newMat = np.empty((numChannel, length//10+1, width), dtype = 'int8')
+    for i in range(np.size(newMat,0)):
+        for j in range(np.size(newMat,1)):
+            for k in range(np.size(newMat,2)):
+                newMat[i,j,k] = mat[i,10*j:10*j+10, k].sum()
+    return newMat
+
 def midiMatrix(filepath):
     mid = mido.MidiFile(filepath)
     MetaMsg = getMetaMessage(mid)
@@ -70,5 +81,6 @@ def midiMatrix(filepath):
                     noteRegister[msg.note] = -1
 
     print('the non-zero elements count {0} in the midi matrax\n\n'.format(np.count_nonzero(midiMat)))
-    return midiMat, note_hit_list
+    shorter = tenTimesShorter(midiMat)
+    return shorter, np.amax(shorter, axis=0), note_hit_list
 
